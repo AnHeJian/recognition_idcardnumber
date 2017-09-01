@@ -1,0 +1,56 @@
+1. 操作系统：
+　　64位Windows10
+2. 下载mxnet的Windows预编译版本，(我已下载CPU版文件mxnet_20160531_win10_x64_cpu.7z和GPU版文件mxnet_20160531_win10_x64_gpu.7z)，也可自行下载地址https://github.com/dmlc/mxnet/releases
+    分为不支持GPUs和支持GPUs版本
+    我选择了CPUs版本。
+　　将下载的压缩包解压，比如解压到D:\mxnet。然后双击执行，D:\mxnet目录下的 setupenv.cmd 文件，即设置好环境。
+3. 下载安装安装python，(我已下载python-2.7.12.amd64.msi安装文件,双击运行)，也可自行下载地址https://www.python.org/downloads/
+    我这是64位系统，请务必装64位的python2.7,例如安装在D:\Python27目录下
+    添加python和pip(python2.7自带pip,在D:\Python27\Scripts目录下)环境变量，即在环境变量path里添加D:\Python27，以及D:\Python27\Scripts
+4. 安装numpy，到pip所在目录，即在命令行下cd D:\Python27\Scripts，再运行pip install numpy
+5. 假设mxnet是解压在D:\mxnet，则设置环境变量PYTHONPATH=d:\mxnet\python
+6. 设置python支持，在D:\mxnetD:\mxnet\python目录下，命令行运行python setup.py install
+    见到“Finished processing dependencies for mxnet==0.7.0”，表示成功
+7. 安装wget，(我已下载wget-1.11.4-1-setup.exe安装文件，双击运行)，下载地址http://downloads.sourceforge.net/gnuwin32/wget-1.11.4-1-setup.exe
+
+
+8. 下载mxnet源代码，(我已下载mxnet-master.zip)，也可自行下载地址https://github.com/dmlc/mxnet/archive/master.zip
+    将压缩包解压到D:\mxnet\mxnet_master目录下
+9. 修改目录下的 python example/image-classification/train_mnist.py 文件，将此文件的第七行开始的 _download() 函数，修改为如下，并保存：
+
+def _download(data_dir):   
+    ## fix for windows
+    data_dir = data_dir.replace("/", "")
+    if not os.path.isdir(data_dir):
+        os.system("mkdir " + data_dir)
+    os.chdir(data_dir)
+    
+    ## fix for windows
+    if (not os.path.exists('mnist.zip')):
+        os.system("wget http://data.dmlc.ml/mxnet/data/mnist.zip")
+        
+    if (not os.path.exists('train-images-idx3-ubyte')) or \
+       (not os.path.exists('train-labels-idx1-ubyte')) or \
+       (not os.path.exists('t10k-images-idx3-ubyte')) or \
+       (not os.path.exists('t10k-labels-idx1-ubyte')):
+        os.system("unzip -u mnist.zip")
+        ## os.system("unzip -u mnist.zip; rm mnist.zip")
+    os.chdir("..")
+
+10. 运行Mnist手写体识别实例
+    cd mxnet/example/image-classification
+    python train_mnist.py
+    
+11. 安装opencv，已下载opencv_python-2.4.13-cp27-cp27m-win_amd64.whl，下载地址http://www.lfd.uci.edu/~gohlke/pythonlibs/6kbpejrn/opencv_python-2.4.13-cp27-cp27m-win_amd64.whl
+    pip install opencv_python-2.4.13-cp27-cp27m-win_amd64.whl
+	
+12.安装matplotlib，
+    pip install matplotlib
+
+11. multiprocessing出错，pickle.PicklingError: Can't pickle 见https://github.com/dmlc/mxnet/issues/2643
+    if args.num_thread == 1:
+        import Queue # move the except block here
+        ...
+    else:
+        import multiprocessing
+        ... # move the try block here
